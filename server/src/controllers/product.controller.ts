@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../model/User";
 import Product from "../model/Product";
+import redisClient from "../lib/redisClient";
 
 export async function addProduct(req: Request, res: Response):Promise<any> {
     try{
@@ -24,6 +25,7 @@ export async function addProduct(req: Request, res: Response):Promise<any> {
             seller: user._id
         });
 
+        redisClient.del("products");
         res.status(200).json({success: true, product: newProduct});
     }catch(error){
         console.log("Error in productController ", error);
@@ -36,6 +38,7 @@ export async function removeProduct(req: Request, res: Response): Promise<any> {
     try{
         const product = await Product.findByIdAndDelete(id);
         if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+        redisClient.del("products");
     
         res.status(200).json({success: true, message: `Product ${product?.productName} deleted successfully`});
     }catch(error){

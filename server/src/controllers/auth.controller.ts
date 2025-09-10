@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import User from "../model/User";
 import "dotenv/config";
 import jwt, { Secret } from "jsonwebtoken";
+import redisClient from "../lib/redisClient";
 
 export async function signup(req: Request, res: Response): Promise<any>{
     const {fullName, email, password, phoneNumber, role} = req.body;
